@@ -9,6 +9,8 @@
   --white: #ffffff;
   --border-color: #e7e9fc;
   --modal-border: #8e8f99;
+  /* FIX 7: named green token for footer subscribe accent state */
+  --subscribe-accent: #31d0aa;
 }
 
 body {
@@ -222,10 +224,6 @@ img {
   width: 169px;
   height: 56px;
 }
-
-
-
-
 
 .hero-btn:hover,
 .hero-btn:focus {
@@ -484,10 +482,10 @@ img {
 
 .footer .social-link:hover,
 .footer .social-link:focus {
-  background-color: #31d0aa;
+  background-color: var(--subscribe-accent);
 }
 
-/* --- D1: Форма підписки у футері --- */
+/* --- FIX 1: Footer subscribe form — wrapped in real <form>, green accent states --- */
 .footer-subscribe {
   margin-left: auto;
 }
@@ -517,8 +515,9 @@ img {
   color: var(--white);
 }
 
+/* FIX 7: focus border uses the correct green subscribe accent */
 .footer-subscribe-input:focus {
-  border-color: var(--accent-color);
+  border-color: var(--subscribe-accent);
 }
 
 .footer-subscribe-btn {
@@ -541,9 +540,10 @@ img {
   transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* FIX 7: hover/focus uses the correct green subscribe accent */
 .footer-subscribe-btn:hover,
 .footer-subscribe-btn:focus {
-  background-color: var(--accent-hover);
+  background-color: var(--subscribe-accent);
 }
 
 .footer-subscribe-icon {
@@ -551,14 +551,9 @@ img {
   flex-shrink: 0;
 }
 
-/* --- BACKDROP + MODAL  (B1–B7) --- */
+/* --- BACKDROP + MODAL --- */
 
-/* Hidden checkbox for modal toggle */
-.modal-toggle {
-  display: none;
-}
-
-/* B2: бекдроп займає 100vw × 100vh і фіксований */
+/* FIX 2 & 3: modal controlled by .is-open class on backdrop (no hidden checkbox) */
 .backdrop {
   position: fixed;
   top: 0;
@@ -566,7 +561,6 @@ img {
   width: 100%;
   height: 100%;
   background-color: rgba(46, 47, 66, 0.4);
-  /* B6: за замовчуванням прихований */
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -574,14 +568,13 @@ img {
     visibility 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* B7: чекбокс checked показує бекдроп і модальне вікно */
-.modal-toggle:checked ~ .backdrop {
+/* FIX 2: show via .is-open class instead of checkbox hack */
+.backdrop.is-open {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
 }
 
-/* B3, B4: модальне вікно, центроване в бекдропі */
 .modal {
   position: absolute;
   top: 50%;
@@ -597,7 +590,7 @@ img {
   transition: transform 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* B5: кнопка закриття у верхньому правому куті */
+/* FIX 4: close button is a proper <button>, not a <label> */
 .modal-close-btn {
   position: absolute;
   top: 24px;
@@ -632,10 +625,7 @@ img {
   fill: var(--white);
 }
 
-/* ========================================
-   D2: Форма заявки у модальному вікні
-======================================== */
-
+/* --- Modal Form (D2) --- */
 .modal-title {
   font-weight: 500;
   font-size: 16px;
@@ -679,7 +669,6 @@ img {
   border: 1px solid rgba(46, 47, 66, 0.4);
   border-radius: 4px;
   outline: none;
-  /* D3: перехід кольору рамки при фокусі */
   transition: border-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -687,7 +676,6 @@ img {
   color: rgba(46, 47, 66, 0.4);
 }
 
-/* D3: рамка змінює колір при фокусі */
 .modal-input:focus {
   border-color: var(--accent-color);
 }
@@ -699,7 +687,6 @@ img {
   transform: translateY(-50%);
   fill: var(--primary-color);
   pointer-events: none;
-  /* D3: іконка змінює колір при фокусі інпута */
   transition: fill 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -707,7 +694,6 @@ img {
   fill: var(--accent-color);
 }
 
-/* C11: textarea з фіксованим розміром, resize заборонений */
 .modal-textarea {
   display: block;
   width: 100%;
@@ -733,12 +719,11 @@ img {
   border-color: var(--accent-color);
 }
 
-/* D4, D5: кастомний чекбокс */
+/* FIX 6: checkbox must come BEFORE label in HTML so the + sibling selector works.
+   The CSS selector targets: input:checked + label .modal-checkbox-custom */
 .modal-checkbox-wrapper {
   margin-bottom: 24px;
 }
-
-/* D4: оригінальний чекбокс прихований через visually-hidden */
 
 .modal-checkbox-label {
   display: flex;
@@ -751,7 +736,6 @@ img {
   cursor: pointer;
 }
 
-/* D5: кастомний чекбокс із SVG-галочкою */
 .modal-checkbox-custom {
   display: inline-flex;
   align-items: center;
@@ -767,6 +751,7 @@ img {
     fill 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* FIX 6: selector now works because <input> precedes <label> in markup */
 .modal-checkbox:checked + .modal-checkbox-label .modal-checkbox-custom {
   background-color: var(--accent-hover);
   border: none;
@@ -782,7 +767,6 @@ img {
   text-decoration: underline;
 }
 
-/* Кнопка Submit */
 .modal-submit-btn {
   display: block;
   margin: 0 auto;

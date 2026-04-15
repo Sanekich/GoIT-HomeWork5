@@ -51,8 +51,8 @@
       <section class="hero">
         <div class="container">
           <h1 class="hero-title">Effective Solutions for Your Business</h1>
-          <!-- Кнопка відкриває модальне вікно -->
-          <label class="hero-btn" for="modal-toggle">Order Service</label>
+          <!-- FIX 2 & 4: button opens modal via JS (no checkbox hack); is a real <button> -->
+          <button class="hero-btn" type="button" data-modal-open>Order Service</button>
         </div>
       </section>
 
@@ -359,10 +359,10 @@
           </ul>
         </div>
 
-        <!-- C3: Форма підписки у футері -->
+        <!-- FIX 1: subscribe block is now a real <form> element -->
         <div class="footer-subscribe">
           <p class="social-title">Subscribe</p>
-          <div class="footer-subscribe-form">
+          <form class="footer-subscribe-form" action="#" method="post">
             <label class="visually-hidden" for="subscribe-email">E-mail</label>
             <input
               class="footer-subscribe-input"
@@ -371,36 +371,38 @@
               name="subscribe-email"
               placeholder="E-mail"
             />
+            <!-- FIX 1: button is now inside <form>, so type="submit" is valid -->
             <button class="footer-subscribe-btn" type="submit">
               Subscribe
               <svg class="footer-subscribe-icon" width="24" height="24" fill="#ffffff">
                 <use href="./images/icons.svg#contact-telegram"></use>
               </svg>
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </footer>
 
-    <!-- ======== BACKDROP + MODAL (B1–B7) ======== -->
-    <!-- Hidden checkbox to control modal state -->
-    <input class="modal-toggle" type="checkbox" id="modal-toggle" />
-
-    <!-- B6: за замовчуванням прихований; B7: клас is-open показує -->
+    <!-- FIX 2 & 3: backdrop is placed directly after </footer> with no stray
+         <input> in between; modal state is toggled via .is-open class in JS -->
     <div class="backdrop" data-modal>
-      <!-- B3, B4: модальне вікно, спозиційоване по центру бекдропа -->
       <div class="modal">
-        <!-- B5: кнопка закриття у верхньому правому куті -->
-        <label class="modal-close-btn" for="modal-toggle" aria-label="Close modal">
+        <!-- FIX 4: close control is a proper <button type="button">, not a <label> -->
+        <button
+          class="modal-close-btn"
+          type="button"
+          data-modal-close
+          aria-label="Close modal"
+        >
           <svg class="modal-close-icon" width="8" height="8">
             <use href="./images/icons.svg#icon-close"></use>
           </svg>
-        </label>
+        </button>
 
-        <!-- C4: форма заявки в модальному вікні -->
         <p class="modal-title">Leave your contacts and we will call you back</p>
 
-        <div class="modal-form">
+        <!-- FIX 5: contact form is a real <form> element -->
+        <form class="modal-form" action="#" method="post">
           <!-- Name -->
           <div class="modal-field">
             <label class="modal-label" for="modal-name">Name</label>
@@ -452,7 +454,7 @@
             </div>
           </div>
 
-          <!-- Comment — C11: textarea з фіксованим розміром (resize: none) -->
+          <!-- Comment -->
           <div class="modal-field">
             <label class="modal-label" for="modal-comment">Comment</label>
             <textarea
@@ -463,8 +465,16 @@
             ></textarea>
           </div>
 
-          <!-- D4/D5: прихований оригінальний чекбокс, кастомний через SVG -->
+          <!-- FIX 6: <input type="checkbox"> comes BEFORE <label> so that the
+               CSS adjacent-sibling selector (.modal-checkbox:checked + .modal-checkbox-label)
+               correctly matches and the custom checkbox style is applied. -->
           <div class="modal-checkbox-wrapper">
+            <input
+              class="modal-checkbox visually-hidden"
+              type="checkbox"
+              id="modal-privacy"
+              name="privacy-policy"
+            />
             <label class="modal-checkbox-label" for="modal-privacy">
               <span class="modal-checkbox-custom">
                 <svg class="modal-checkbox-icon" width="10" height="8">
@@ -474,19 +484,46 @@
               I accept the terms and conditions of the
               <a class="modal-privacy-link" href="#">Privacy Policy</a>
             </label>
-            <input
-              class="modal-checkbox visually-hidden"
-              type="checkbox"
-              id="modal-privacy"
-              name="privacy-policy"
-            />
           </div>
 
-          <!-- C9: кнопка відправлення з type="submit" -->
+          <!-- FIX 5: submit button is inside <form>, so type="submit" is valid -->
           <button class="modal-submit-btn" type="submit">Send</button>
-        </div>
+        </form>
       </div>
     </div>
 
+    <script>
+      // FIX 2 & 3 & 4: modal controlled by toggling .is-open on .backdrop
+      (function () {
+        const backdrop = document.querySelector('[data-modal]');
+        const openBtns = document.querySelectorAll('[data-modal-open]');
+        const closeBtn = document.querySelector('[data-modal-close]');
+
+        function openModal() {
+          backdrop.classList.add('is-open');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+          backdrop.classList.remove('is-open');
+          document.body.style.overflow = '';
+        }
+
+        openBtns.forEach(btn => btn.addEventListener('click', openModal));
+        closeBtn.addEventListener('click', closeModal);
+
+        // Close on backdrop click (outside modal)
+        backdrop.addEventListener('click', function (e) {
+          if (e.target === backdrop) closeModal();
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && backdrop.classList.contains('is-open')) {
+            closeModal();
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
